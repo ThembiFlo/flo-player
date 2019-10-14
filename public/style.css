@@ -1,0 +1,33 @@
+body {
+    background-color: lightgray ;
+  }
+  
+  h1 {
+    color: white;
+    text-align: center;
+  }
+  
+  p {
+    font-family: verdana;
+    font-size: 20px;
+  }
+  div {
+    background-color: lightgrey;
+    width: 300px;
+    border: 5px solid white;
+    padding: 10px;
+    margin: 40px; 
+  }
+  form{
+    border: 5px salmon;
+    padding: 10px;
+    margin-bottom: 40px;
+  }
+
+  input{
+    padding: 30px 30px;
+    margin-right: 100px;
+  }
+
+  
+  

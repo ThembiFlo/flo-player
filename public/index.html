@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="style.css">
+    <title>My Playlist</title>
+</head>
+<body>
+  <header>
+      <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">FlohMusic</a>
+            
+            </div>
+            
+          </div>
+        </nav>
+  </header>
+        <section style="padding: 80px">
+    
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="alert-success" id="status"></div>
+            <h5>My Playlist</h5>
+            <div class="clearfix"></div>
+        
+          <ul class="playlist list-group">
+    
+          </ul>
+
+        </div>
+        <div class="col-md-4">
+          <h5>Add New Song</h5>
+          <div class="card" style="padding: 20px">
+            <form method="POST" enctype="multipart/form-data" id="myForm">
+              <div>
+                
+                  <input class="form-control mt-1" type="text" value="" id ="artistName"name="artistName" placeholder="Artist Name">
+                  <input class="form-control mt-1" type="text" value="" id ="songName" name="songName" placeholder="Song Name">
+                  <input class="form-control mt-1" type="text" value="" id="duration" name="duration"placeholder="Duration">
+                  <button id="addSong" class="btn btn-primary mt-1" style="padding: 5px" type="submit" name="submit">Add to playlist</button>
+              </div>
+
+            </form>
+            <div class="alert-success" id="status"></div>
+          </div>
+        </div>
+    </div>
+
+    </section>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(() => {
+      $.ajax({
+          url: 'http://localhost:3090/api/v1/playlist',
+          type: 'GET',
+          dataType: 'json',
+          success: (data) => {
+            // console.log(data.playlist);
+            displayPlaylist(data.playlist);
+
+          }
+      });
+    });
+
+    function displayPlaylist (playlist) {
+        for (let x = 0; x<playlist.length; x++) {
+          $('.playlist').append('<li class="list-group-item"> ' +
+             '<i class="fa fa-music fa-2x" style="color:pink;padding: 10px;"> </i> <strong>' + playlist[x].artist + '</strong> - ' + playlist[x].song +
+             ' -  <span class="muted" style="color:pink"> '+ playlist[x].time + '</span> <hr>' +
+             ' <button id="removeSong" onclick="deleteSong('+playlist[x].id +')"><i class="fa fa-cross"></i>Remove</button> | <button id="view" href="#"><i class="fa fa-cross"></i>View</button> | <span style="color:pink"><small>My Coding Playlist</small></span></li>');
+        }
+    }
+
+    $('#addSong').click (() => {
+
+      $.ajax({
+          url: 'http://localhost:3090/api/v1/playlist',
+          type: 'POST',
+          data: {
+            artist: $('#artistName').val(),
+            song: $('#songName').val(),
+            time: $('#duration').val()
+          },
+          success: (data) => {
+            console.log('Added to playlist');
+            // displayPlaylist(data.playlist);
+            $('#status').html(data.message);
+
+          }
+      });
+
+      
+    });
+
+   function deleteSong(id) {
+
+      $.ajax({
+          url: 'http://localhost:3090/api/v1/playlist/'+id,
+          type: 'DELETE',
+          dataFilter: 'json',
+          success: (data) => {
+            console.log('Deleted Successfully');
+            // displayPlaylist(data.playlist);
+            $('#deleteStatus').html(data.message);
+
+          },
+          complete: function(data){
+                ajaxFunction();
+
+                }
+    });
+  }
+</script>
+</html>
