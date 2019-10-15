@@ -1,9 +1,9 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var db = require('./db/db');
-var http = require('http');
-var fs = require('fs');
-var cors = require('cors');
+import express from 'express';
+import bodyParser from 'body-parser';
+import db from './db/db';
+import http from 'http';
+import fs from 'fs';
+import cors from 'cors';
 // Set up the express app
 const app = express();
 
