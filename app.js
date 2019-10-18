@@ -31,7 +31,7 @@ const fakeDatabase = {
 }
 
 // app.get('/api/v1/playlist', (req, res) => {
-//   console.log('Getting shit done');
+//   console.log('Getting things done');
 // });
 
 function onRequest(request, response) {
@@ -130,7 +130,7 @@ app.delete('/api/v1/playlist/:id', (req, res) => {
        db.splice(index, 1);
        return res.status(200).send({
          success: 'true',
-         message: 'Song deleted successfuly',
+         message: 'Song deleted successfully',
        });
     }
   });
