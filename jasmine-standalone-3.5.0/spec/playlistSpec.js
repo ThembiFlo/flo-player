@@ -1,19 +1,23 @@
-var request = require('request');
-var base_url = 'http://localhost:3090/';
+const request = require('supertest');
+const app = require('../app');
+const assert = require('assert');
+const fs = require('fs');
 
-describe('Hello World Server', function() {
-	describe('GET /', function() {
-		it('returns status code 200', function() {
-			request.get(base_url, function(error, response, body) {
-				expect(response.statusCode).toBe(200);
-				//done();
-			});
-		});
-		it('should return playlist', function(done) {
-			request.get(base_url, function(error, response, body) {
-				expect(body).toBe('flo-player');
-				//done();
-			});
-		});
+const getcount = () => {
+	let count = 0;
+	fs.readFile('./db/db.js', 'utf8', function(err, data) {
+		let results = JSON.parse(data);
+		count = results.items.length;
 	});
+	return count;
+};
+
+describe('Server:', (done) => {
+	it('should read app list', (done) => {
+		request(app).get('/api/app').expect(200, done);
+	});
+
+	it('should delete app item in file', (done) => {});
+
+	it('should add app item', (done) => {});
 });
