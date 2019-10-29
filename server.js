@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname, './public/index.html'));
+    res.sendFile(path.join(__dirname, './App/App.html'));
 });
 
 app.get('/script.js', function (req, res) {
