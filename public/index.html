@@ -76,130 +76,139 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
-    $(document).ready(() => {
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist',
-          type: 'GET',
-          dataType: 'json',
-          success: (data) => {
-            // console.log(data.playlist);
-            displayPlaylist(data.playlist);
+  $(document).ready(() => {
 
-          }
-      });
-    });
+    (async () => {
+        const fetchResult = await fetch('http://localhost:3090/api/v1/playlist')
+        // Here fetch return the promise, so we need to await it again and parse according to our needs.
+        const data = await fetchResult.text();
+        displayPlaylist(data);
+        return data;
+      })();
 
-    function getOneSong(id) {
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist/'+id,
-          type: 'GET',
-          dataType: 'json',
-          success: (data) => {
-            appendSong(data.playlist); 
-          }
-      });
-    }
+  });
+  // End document ready
 
-    function appendSong(song) {
-      
-        $('#songID').val(song.id);
-         $('#artist').val(song.artist),
-           $('#song').val(song.song),
-           $('#time').val(song.time)
-    }
+  function getOneSong(id) {
 
-    function displayPlaylist (playlist) {
-        for (let x = 0; x<playlist.length; x++) {
-          $('.playlist').append('<li class="list-group-item"> ' +
-             '<i class="fa fa-music fa-2x" style="color:pink;padding: 10px;"> </i> <strong>' + playlist[x].artist + '</strong> - ' + playlist[x].song +
-             ' -  <span class="muted" style="color:pink"> '+ playlist[x].time + '</span> <hr>' +
-             ' <button id="removeSong" onclick="deleteSong('+playlist[x].id +')"><i class="fa fa-cross"></i>Remove</button> | <button id="edit" onclick="editSong('+playlist[x].id+')"><i class="fa fa-cross"></i>Edit</button> | <span style="color:pink"><small>My Coding Playlist</small></span></li>');
-        }
-    }
 
-    $('#addSong').click (() => {
+    (async () => {
+        const fetchResult = await fetch('http://localhost:3090/api/v1/playlist/'+id)
+        // Here fetch return the promise, so we need to await it again and parse according to our needs. So, the result code would be this
+        const data = await fetchResult.text();
+        appendSong(data); 
+        return data;
+      })();
 
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist',
-          type: 'POST',
-          data: {
-            artist: $('#artistName').val(),
-            song: $('#songName').val(),
-            time: $('#duration').val()
-          },
-          success: (data) => {
-            console.log('Added to playlist');
-            // displayPlaylist(data.playlist);
-            $('#status').html(data.message);
-            // alert('Posted');
-            location.reload();//redirection
-          }
-      });
-
-      
-    });
-
-    function editSong (id) {
-        // call the api for one song
-       getOneSong(id);
-        
-    }
-
-    $('#updateSong').click(()=> {
-      var id = $('#songID').val();
-      // alert(id);
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist/'+id,
-          type: 'PUT',
-          data: {
-            artist: $('#artist').val(),
-            song: $('#song').val(),
-            time: $('#time').val()
-          },
-          success: (data) => {
-            console.log('Updated to playlist');
-            // alert(data);
-            // displayPlaylist(data.playlist);
-            $('#status').html('Successfully Updated Artist name');
-            // alert('Posted');
-            // location.reload();//redirection
-          }
-      });
-    
-    });
-
-    
-
-   function deleteSong(id) {
-
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist/'+id,
-          type: 'DELETE',
-          data: $('.playlist').serialize(),
-          success: (data) => {
-            console.log('Deleted Successfully');
-            // displayPlaylist(data.playlist);
-            $('#deleteStatus').html(data.message);
-            $('.playlist').html(data);
-
-            
-          },
-          complete: () => {
-            reloadList();
-          }
-    });
   }
 
-  function reloadList() {
-      $.ajax({
-          url: 'http://localhost:3090/api/v1/playlist',
-          type: 'GET',
-          dataType: 'json',
-          success: (data) => {
-            // console.log(data.playlist);
-            displayPlaylist(data.playlist);
-          }
-      });
-    }
+  function appendSong(playlistSong) {
+    
+    let selectedSong = JSON.parse(playlistSong);
+    let song = selectedSong.playlist; 
+      $('#songID').val(song.id);
+       $('#artist').val(song.artist),
+         $('#song').val(song.song),
+         $('#time').val(song.time)
+  }
+
+  function displayPlaylist (songs) {
+
+    let playlistSongs = JSON.parse(songs);
+
+    let playlist = playlistSongs.playlist; 
+    
+      for (let x = 0; x<playlist.length; x++) {
+        $('.playlist').append('<li class="list-group-item"> ' +
+           '<i class="fa fa-music fa-2x" style="color:pink;padding: 10px;"> </i> <strong>' + playlist[x].artist + '</strong> - ' + playlist[x].song +
+           ' -  <span class="muted" style="color:pink"> '+ playlist[x].time + '</span> <hr>' +
+           ' <button id="removeSong" onclick="deleteSong('+playlist[x].id +')"><i class="fa fa-cross"></i>Remove</button> | <button id="edit" onclick="editSong('+playlist[x].id+')"><i class="fa fa-cross"></i>Edit</button> | <span style="color:pink"><small>My Coding Playlist</small></span></li>');
+      }
+  }
+
+  $('#addSong').click (() => {
+
+    $.ajax({
+        url: 'http://localhost:3090/api/v1/playlist',
+        type: 'POST',
+        data: {
+          artist: $('#artistName').val(),
+          song: $('#songName').val(),
+          time: $('#duration').val()
+        },
+        success: (data) => {
+          console.log('Added to playlist');
+          // displayPlaylist(data.playlist);
+          $('#status').html(data.message);
+          // alert('Posted');
+          location.reload();//redirection
+        }
+    });
+
+    
+  });
+
+  function editSong (id) {
+      // call the api for one song
+     getOneSong(id);
+      
+  }
+
+  $('#updateSong').click(()=> {
+    var id = $('#songID').val();
+    // alert(id);
+    $.ajax({
+        url: 'http://localhost:3090/api/v1/playlist/'+id,
+        type: 'PUT',
+        data: {
+          artist: $('#artist').val(),
+          song: $('#song').val(),
+          time: $('#time').val()
+        },
+        success: (data) => {
+          console.log('Updated to playlist');
+          // alert(data);
+          // displayPlaylist(data.playlist);
+          $('#status').html('Successfully Updated Artist name');
+          // alert('Posted');
+          // location.reload();//redirection
+        }
+    });
+  
+  });
+
+  
+
+ function deleteSong(id) {
+
+    $.ajax({
+        url: 'http://localhost:3090/api/v1/playlist/'+id,
+        type: 'DELETE',
+        data: $('.playlist').serialize(),
+        success: (data) => {
+          console.log('Deleted Successfully');
+          // displayPlaylist(data.playlist);
+          $('#deleteStatus').html(data.message);
+          $('.playlist').html(data);
+
+          
+        },
+        complete: () => {
+          reloadList();
+        }
+  });
+}
+
+function reloadList() {
+    $.ajax({
+        url: 'http://localhost:3090/api/v1/playlist',
+        type: 'GET',
+        dataType: 'json',
+        success: (data) => {
+          // console.log(data.playlist);
+          displayPlaylist(data.playlist);
+        }
+    });
+  }
 </script>
 </html>
